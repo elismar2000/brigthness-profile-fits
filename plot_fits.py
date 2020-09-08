@@ -25,12 +25,12 @@ norm = plt.Normalize(min, max)
 
 fig, axs = plt.subplots(1, 3, sharey=True, figsize=(40, 40))
 axs[0].imshow(image, cmap='magma', origin='lower', norm=norm)
-axs[0].set_title('image')
+axs[0].set_title('Image')
 
 axs[1].imshow(model, cmap='magma', origin='lower', norm=norm)
-axs[1].set_title('model')
+axs[1].set_title('Model')
 
 axs[2].imshow(residual, cmap='magma', origin='lower', norm=norm)
-axs[2].set_title('residual')
+axs[2].set_title('Residual')
 
 plt.show()

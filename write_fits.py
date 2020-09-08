@@ -12,10 +12,10 @@ hdu_list = fits.open(input)
 print(hdu_list.info())
 
 sci_data = hdu_list[1].data
-dq_data = hdu_list[3].data
+#dq_data = hdu_list[3].data
 
-mask = dq_data == 0
-sci_data *= mask
+#mask = dq_data == 0
+#sci_data *= mask
 
 hdu = fits.PrimaryHDU(sci_data)
-hdu.writeto(output)
+hdu.writeto(output, overwrite=True)
