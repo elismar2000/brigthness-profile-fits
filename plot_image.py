@@ -18,8 +18,9 @@ image = fits.getdata(image_file)
 #==================================
 
 norm = plt.Normalize(min, max)
+cmap = 'twilight'
 
-plt.imshow(image, cmap='plasma', origin='lower', norm=norm)
+plt.imshow(image, cmap=cmap, origin='lower', norm=norm)
 cbar = plt.colorbar()
 
 plt.show()

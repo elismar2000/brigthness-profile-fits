@@ -9,8 +9,9 @@ from photutils.isophote import EllipseGeometry, Ellipse
 #Performing the inverse Abel transformation over the bulge 2D image
 #=======================
 
-bulge_image = '/home/elismar/Documentos/Fisica/IC/imfit-1.7.1/ngc2992-93/images/NICMOS/n4sb08040/bulge_cut.fits'
-image = fits.getdata(bulge_image)
+#This must be a 2D model image of the bulge to be transformed
+image = 'image'
+image = fits.getdata(image)
 
 #The center pixel coordinates of the bulge
 x0 = 15
