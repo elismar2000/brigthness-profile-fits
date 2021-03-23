@@ -24,6 +24,7 @@ v_obs = np.asarray(v_obs)
 v_obs -= v_obs[0]
 v_obs = abs(v_obs) * u.km / u.s
 
+#deleting the first few due to resolution issues
 radii = radii[5:]
 v_obs = v_obs[5:]
 
@@ -40,7 +41,7 @@ a = 0.38  #kpc
 M_disk = 5.0e+10 #Msun
 Rd = 2.1 #kpc
 
-radii = radii * 38e+3 / 3600 #Kpc
+radii = radii * 39e+3 / 3600 #Kpc
 
 mass_lum = np.array([M_r_bulge(r, M_bulge, a) + M_r_disk(r, M_disk, Rd) for r in radii])
 
@@ -55,14 +56,14 @@ M_dark = (radii / G) * (v_obs**2 - v_lum**2)
 M_dark = M_dark.to(u.Msun)
 
 fig, axs = plt.subplots(1, 2)
-axs[0].plot(radii, v_obs, 'rx')
-axs[0].plot(radii, v_lum, 'b--x')
-axs[0].set_ylabel('km/s')
-axs[0].set_xlabel('kpc')
+axs[0].plot(radii, v_obs, marker='s', color='orangered', label='Observed rotation curve')
+axs[0].plot(radii, v_lum, 'o', color='gold', label='Keplerian rotation curve from luminous matter')
+axs[0].set_ylabel('km/s', fontsize=20)
+axs[0].set_xlabel('kpc', fontsize=20)
 
-axs[1].plot(radii, M_dark, 'gx')
-axs[1].set_ylabel(r'$M_{\odot}$')
-axs[1].set_xlabel('kpc')
+axs[1].plot(radii, M_dark, marker='x', color='slateblue', label='Calculated value of halo cumulative density profile')
+axs[1].set_ylabel(r'$M_{\odot}$', fontsize=20)
+axs[1].set_xlabel('kpc', fontsize=20)
 
 #========================================
 
@@ -77,6 +78,9 @@ result = model.fit(M_dark.value, params, r=radii.value)
 
 print(result.fit_report())
 
-axs[1].plot(radii, Hernquist(radii.value, result.params['M'].value, result.params['a'].value), 'k--')
+axs[1].plot(radii, Hernquist(radii.value, result.params['M'].value, result.params['a'].value), linestyle='--',
+    color='indigo', label='Line of best fit')
 
+axs[0].legend()
+axs[1].legend()
 plt.show()
