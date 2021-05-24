@@ -8,25 +8,17 @@ import scipy.constants as cons
 
 light_curve = np.genfromtxt('ngc2992_vel_curve.dat')
 
-radii_neg = np.sort(light_curve[:, 8][light_curve[:, 8] < 0])
-radii_pos = np.sort(light_curve[:, 8][light_curve[:, 8] > 0])
+radii_neg = np.sort(light_curve[:, 8][light_curve[:, 8] < 0])[::-1] * -1
+radii = radii_neg
 
-radii = np.sort(abs(light_curve[:, 8]))
+v_obs = np.array([light_curve[:, 9][light_curve[:, 8] == -r][0] for r in radii_neg])
 
-v_obs = []
-for r in radii:
-    if np.isin(r, radii_pos):
-        v_obs.append(light_curve[:, 9][light_curve[:, 8] == r][0])
-    if np.isin(r, radii_neg * -1):
-        v_obs.append(light_curve[:, 9][light_curve[:, 8] == -r][0])
-
-v_obs = np.asarray(v_obs)
 v_obs -= v_obs[0]
 v_obs = abs(v_obs) * u.km / u.s
 
 #deleting the first few due to resolution issues
-radii = radii[5:]
-v_obs = v_obs[5:]
+radii = radii[3:-3]
+v_obs = v_obs[3:-3]
 
 #========================================
 
@@ -41,7 +33,9 @@ a = 0.38  #kpc
 M_disk = 5.0e+10 #Msun
 Rd = 2.1 #kpc
 
-radii = np.deg2rad(radii / 3600) * 39e+3 #Kpc
+distance = 39e+3 #Kpc
+
+radii = np.deg2rad(radii / 3600) * distance #Kpc
 
 mass_lum = np.array([M_r_bulge(r, M_bulge, a) + M_r_disk(r, M_disk, Rd) for r in radii])
 
@@ -57,7 +51,7 @@ M_dark = M_dark.to(u.Msun)
 
 fig, axs = plt.subplots(1, 2)
 axs[0].plot(radii, v_obs, marker='s', color='orangered', label='Observed rotation curve')
-axs[0].plot(radii, v_lum, 'o', color='gold', label='Keplerian-like rotation curve from luminous matter')
+axs[0].plot(radii, v_lum, 'o', color='gold', label='Keplerian rotation curve from luminous matter')
 axs[0].set_ylabel('km/s', fontsize=20)
 axs[0].set_xlabel('kpc', fontsize=20)
 
@@ -72,8 +66,8 @@ def Hernquist(r, M, a):
 
 model = Model(Hernquist)
 params = Parameters()
-params.add('M', value=1e+12)
-params.add('a', value=50)
+params.add('M', value=1e+12, min=1e+9, max=1e+13)
+params.add('a', value=100, min=1, max=50)
 result = model.fit(M_dark.value, params, r=radii.value)
 
 print(result.fit_report())
